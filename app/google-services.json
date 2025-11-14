@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884947098317",
+    "project_id": "freepark-app-2025",
+    "storage_bucket": "freepark-app-2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884947098317:android:7bc17ad9c5a4276b24e784",
+        "android_client_info": {
+          "package_name": "com.example.freepark"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9bLo_NlsDbxvyIEevw_7-Bn_q4eMDvOc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
