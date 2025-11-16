@@ -5,23 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-// OBAVEZNO OVI UVOZI
 import com.example.freepark.ui.signup.CustomPasswordTextField
 import com.example.freepark.ui.signup.CustomTextField
 
@@ -75,7 +69,7 @@ fun SignInScreen(
                     value = username,
                     onValueChange = { viewModel.username.value = it },
                     label = "Username",
-                    primaryColor = primaryColor // Koristi primaryColor (Crna)
+                    primaryColor = primaryColor
                 )
 
                 CustomPasswordTextField(
@@ -85,7 +79,7 @@ fun SignInScreen(
                     showPassword = showPassword,
                     onTogglePassword = { viewModel.showPassword.value = !showPassword },
                     isError = false,
-                    primaryColor = primaryColor // Koristi primaryColor (Crna)
+                    primaryColor = primaryColor
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))

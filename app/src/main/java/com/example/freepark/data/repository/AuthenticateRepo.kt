@@ -1,15 +1,20 @@
 package com.example.freepark.data.repository
 
+import android.location.Location
 import android.net.Uri
 import com.example.freepark.BuildConfig
-import com.example.freepark.data.datasource.FirebaseDataSource
+import com.example.freepark.data.datasource.FirebaseAuthDataSource
 import com.example.freepark.data.datasource.CloudinaryDataSource
+import com.google.firebase.firestore.DocumentSnapshot
 import javax.inject.Inject
 
 class AuthenticateRepo @Inject constructor(
-    private val FirebaseDataSource: FirebaseDataSource,
+    private val FirebaseAuthDataSource: FirebaseAuthDataSource,
     private val cloudinaryDataSource: CloudinaryDataSource
 ) {
+    val currentUserId: String?
+        get() = FirebaseAuthDataSource.currentUser?.uid
+
     fun registerUser(
         email: String,
         password: String,
@@ -20,19 +25,35 @@ class AuthenticateRepo @Inject constructor(
         photoUri: Uri?,
         onComplete: (Boolean, Exception?) -> Unit
     ) {
-        FirebaseDataSource.checkUsernameExists(username) { exists, error ->
+        FirebaseAuthDataSource.checkUsernameExists(username) { exists, error ->
             if (error != null) {
                 onComplete(false, error)
                 return@checkUsernameExists
             }
 
-            FirebaseDataSource.signUp(email, password) { success, error ->
+            if (exists) {
+                onComplete(false, Exception("Username is already claimed. Try another one."))
+                return@checkUsernameExists
+            }
+
+            FirebaseAuthDataSource.signUp(email, password) { success, error ->
                 if (!success) {
                     onComplete(false, error)
                     return@signUp
                 }
 
-                val userId = FirebaseDataSource.currentUser?.uid ?: ""
+                val userId = FirebaseAuthDataSource.currentUser?.uid ?: ""
+
+                val currentUser = FirebaseAuthDataSource.currentUser
+                val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
+
+                currentUser?.updateProfile(profileUpdates)?.addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        println("Error while setting displayName: ${task.exception}")
+                    }
+                }
 
                 val uploadAndSave: (String?) -> Unit = { photoUrl ->
                     val userMap = mapOf(
@@ -42,7 +63,7 @@ class AuthenticateRepo @Inject constructor(
                         "phone" to phone,
                         "photo" to (photoUrl ?: "")
                     )
-                    FirebaseDataSource.addUserToFirestore(userId, userMap, onComplete)
+                    FirebaseAuthDataSource.addUserToFirestore(userId, userMap, onComplete)
                 }
 
                 if (photoUri != null) {
@@ -65,11 +86,34 @@ class AuthenticateRepo @Inject constructor(
         password: String,
         onComplete: (Boolean, Exception?) -> Unit
     ) {
-        FirebaseDataSource.login(email, password, onComplete)
+        FirebaseAuthDataSource.login(email, password, onComplete)
     }
 
     fun logoutUser() {
-        FirebaseDataSource.logout()
+        FirebaseAuthDataSource.logout()
+    }
+
+    suspend fun getNearbyUsers(currentLocation: Location, radiusMeters: Double): List<DocumentSnapshot> {
+        val allUsers = FirebaseAuthDataSource.getAllUsers()
+        val nearbyUsers = mutableListOf<DocumentSnapshot>()
+        val distanceArray = FloatArray(1)
+
+        for (doc in allUsers) {
+            if (doc.id == currentUserId) continue
+
+            val geo = doc.getGeoPoint("location") ?: continue
+
+            Location.distanceBetween(
+                currentLocation.latitude, currentLocation.longitude,
+                geo.latitude, geo.longitude,
+                distanceArray
+            )
+
+            if (distanceArray[0] <= radiusMeters) {
+                nearbyUsers.add(doc)
+            }
+        }
+        return nearbyUsers
     }
 }
 

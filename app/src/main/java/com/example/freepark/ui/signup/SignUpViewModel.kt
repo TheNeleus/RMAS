@@ -43,7 +43,7 @@ class SignUpViewModel @Inject constructor(
         if (passwordValue.length < MIN_PASSWORD_LENGTH) {
             passwordError.value = "Password must have at least $MIN_PASSWORD_LENGTH characters."
             signUpSuccess.value = false
-            return // Zaustavi slanje zahteva Firebase-u
+            return
         }
 
         val fakeEmail = "$usernameValue@freepark.com"

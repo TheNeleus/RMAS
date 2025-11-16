@@ -8,18 +8,13 @@ import javax.inject.Inject
 
 class CloudinaryDataSource @Inject constructor() {
 
-    /**
-     * @param uri - Uri slike koja se uploaduje
-     * @param folder - folder na Cloudinary gde zelimo da se slika smesti
-     * @param onResult - callback sa URL-om ili Exception
-     */
     fun uploadImage(
         uri: Uri,
         folder: String = "Profiles",
         onResult: (String?, Exception?) -> Unit
     ) {
         MediaManager.get().upload(uri)
-            .option("folder", folder)  // definisanje foldera
+            .option("folder", folder)
             .callback(object : UploadCallback {
                 override fun onStart(requestId: String?) {}
                 override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}

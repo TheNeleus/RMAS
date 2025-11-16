@@ -204,7 +204,11 @@ fun SignUpScreen(
                 }
 
                 signUpSuccess?.let { success ->
-                    if (success) Text("Sign up successful!", color = primaryColor)
+                    if (success) {
+                        LaunchedEffect(Unit) {
+                            navController.popBackStack()
+                        }
+                    }
                     else Text("Error: $signUpError", color = MaterialTheme.colorScheme.error)
                 }
             }
@@ -212,7 +216,6 @@ fun SignUpScreen(
     }
 }
 
-// AŽURIRANA POMOĆNA KOMPONENTA: Tekst unutar polja je sada CRN
 @Composable
 fun CustomTextField(
     value: String,
@@ -237,7 +240,6 @@ fun CustomTextField(
             unfocusedBorderColor = Color.LightGray,
             focusedLabelColor = primaryColor,
             unfocusedLabelColor = Color.Gray,
-            // NOVO: Boja teksta unutar polja je CRNA
             focusedTextColor = primaryColor,
             unfocusedTextColor = primaryColor,
         ),
@@ -246,7 +248,7 @@ fun CustomTextField(
     )
 }
 
-// AŽURIRANA POMOĆNA KOMPONENTA: Tekst unutar polja je sada CRN
+
 @Composable
 fun CustomPasswordTextField(
     value: String,
@@ -275,7 +277,6 @@ fun CustomPasswordTextField(
             unfocusedBorderColor = Color.LightGray,
             focusedLabelColor = primaryColor,
             unfocusedLabelColor = Color.Gray,
-            // NOVO: Boja teksta unutar polja je CRNA
             focusedTextColor = primaryColor,
             unfocusedTextColor = primaryColor,
         ),

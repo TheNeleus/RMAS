@@ -1,12 +1,14 @@
 package com.example.freepark.data.datasource
 
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
-class FirebaseDataSource @Inject constructor(
+class FirebaseAuthDataSource @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) {
@@ -63,7 +65,7 @@ class FirebaseDataSource @Inject constructor(
             .whereEqualTo("username", username)
             .get()
             .addOnSuccessListener { snapshot ->
-                onResult(!snapshot.isEmpty, null) // true if exists already
+                onResult(!snapshot.isEmpty, null)
             }
             .addOnFailureListener { e ->
                 onResult(false, e)
@@ -72,6 +74,18 @@ class FirebaseDataSource @Inject constructor(
 
     fun logout() {
         auth.signOut()
+    }
+
+    suspend fun getAllUsers(): List<com.google.firebase.firestore.DocumentSnapshot> {
+        return try {
+            firestore.collection("users")
+                .get()
+                .await()
+                .documents
+        } catch (e: Exception) {
+            Log.e("FirebaseDataSource", "Error getting all users", e)
+            emptyList()
+        }
     }
 
 }

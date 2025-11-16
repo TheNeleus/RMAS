@@ -29,7 +29,6 @@ fun NavGraph() {
 
         composable("map") {
             MapScreen(
-                navController = navController
             )
         }
     }

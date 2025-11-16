@@ -97,8 +97,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.compose.foundation)
 
     ksp("com.google.dagger:hilt-android-compiler:2.56.2")
+
+    implementation(libs.androidx.compose.ui.text)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
